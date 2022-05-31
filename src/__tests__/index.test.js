@@ -49,15 +49,13 @@ describe("Testing the environment", () => {
   const notFound = {
     name: "product not found",
   };
-  const correctID = {
-    _id: "6296214ec72cdba4468acee6",
-  };
 
   it("should test that the POST /api/products endpoint returns a valid product", async () => {
     const response = await client.post("/api/products").send(validProduct);
 
     expect(response.status).toBe(201);
     expect(response.body._id).toBeDefined();
+    validProduct._id = response.body._id;
   });
 
   it("should check that the POST /api/products endpoint returns 400 when an invalid product", async () => {
@@ -74,24 +72,60 @@ describe("Testing the environment", () => {
     expect(response.body[0].name).toBe(validProduct.name);
   });
 
-  it("shoud test not find the corresponding product in GET /api/products/:id", async () => {
-    const response = await client
-      .get("/api/products/6296214ec72cdba4468acee6")
-      .send(notFound);
+  // testing for get by id ***************************************************
 
-    expect(response.status).toBe(404); // ????????????????????????????????????
+  it("shoud test not find the corresponding product in GET /api/products/:id", async () => {
+    const response = await client.get("/api/products/999999999999999999999999");
+
+    expect(response.status).toBe(404);
   });
 
   it("should test that the GET /api/products/:id endpoint returns the existing product", async () => {
-    const response = await client.get("/api/products/6296214ec72cdba4468acee6");
+    const response = await client.get("/api/products/" + validProduct._id);
 
     expect(response.status).toBe(200);
-    expect(response.body._id).toBe(correctID._id);
+    expect(response.body._id).toBe(validProduct._id);
+  });
+
+  //testing for update by id***************************************************
+
+  it("should test that the PUT /api/products/:id endpoint returns the existing product", async () => {
+    const response = await client
+      .put("/api/products/" + validProduct._id)
+      .send(validProduct);
+
+    let previousName = response.body.name;
+
+    expect(response.status).toBe(202);
+    expect(response.body.name).toBe(!previousName);
+    expect(response.body.name).toBe(validProduct.name);
+  });
+
+  it("should test that the PUT /api/products/:id endpoint not find the related product", async () => {
+    const response = await client
+      .put("/api/products/123456123456123456123456")
+      .send(validProduct);
+
+    expect(response.status).toBe(404);
+  });
+
+  //testing for delete by id***************************************************
+
+  it("should test that the DELETE /api/products/:id endpoint returns a positive repsonse", async () => {
+    const response = await client.delete("/api/products/" + validProduct._id);
+
+    expect(response.status).toBe(200);
+  });
+
+  it("should test that the DELETE /api/products/:id endpoint could not find the product", async () => {
+    const response = await client.delete("/api/products/" + validProduct._id);
+
+    expect(response.status).toBe(404);
   });
 
   afterAll(async () => {
     console.log("Running after all the tests in the suite");
-    // await mongoose.connection.dropDatabase();
+    await mongoose.connection.dropDatabase();
     await mongoose.connection.close();
   });
 });

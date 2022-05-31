@@ -13,7 +13,12 @@ productsRouter
   .get("/:id", async (req, res, next) => {
     try {
       const product = await Product.findById(req.params.id);
-      console.log(req.params);
+      console.table({ product });
+
+      if (!product) {
+        return res.status(404).send("Product not found");
+      }
+
       res.send(product);
     } catch (error) {
       next(error);
@@ -29,6 +34,20 @@ productsRouter
     } catch (error) {
       console.log(error);
       res.status(400).send();
+    }
+  })
+
+  .delete("/:id", async (req, res, next) => {
+    try {
+      const product = await Product.findByIdAndDelete(req.params.id);
+
+      if (!product) {
+        return res.status(404).send("Product not found");
+      }
+
+      res.send(product);
+    } catch (error) {
+      next(error);
     }
   });
 
