@@ -38,8 +38,9 @@ describe("Testing the environment", () => {
     })
 
     const validProduct = {
-        name: "Another Test Prod",
-        price: 999
+        name: "Test Prod",
+        price: 999,
+        description: "This is a test product"
     }
 
     const invalidProduct = {
