@@ -60,6 +60,14 @@ describe("Testing the environment", () => {
         expect(response.status).toBe(400)
     })
 
+    it("should test that the GET /api/products endpoint returns the existing products", async () => {
+        const response = await client.get("/api/products")
+
+        expect(response.status).toBe(200)
+        expect(response.body.length).toBeGreaterThan(0)
+        expect(response.body[0].name).toBe(validProduct.name)
+    })
+
     afterAll(async () => {
         console.log("Running after all the tests in the suite")
         await mongoose.connection.dropDatabase()
