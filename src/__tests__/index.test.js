@@ -38,7 +38,7 @@ describe("Testing the environment", () => {
 
   let validProduct = {
     name: "hair",
-    price: 999,
+    price: 340,
     description: "This is a test product",
   };
 
@@ -94,10 +94,8 @@ describe("Testing the environment", () => {
       .put("/api/products/" + validProduct._id)
       .send(validProduct);
 
-    let previousName = response.body.name;
+    expect(response.status).toBe(200);
 
-    expect(response.status).toBe(202);
-    expect(response.body.name).toBe(!previousName);
     expect(response.body.name).toBe(validProduct.name);
   });
 

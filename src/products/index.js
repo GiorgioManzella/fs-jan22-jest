@@ -37,6 +37,22 @@ productsRouter
     }
   })
 
+  .put("/:id", async (req, res, next) => {
+    try {
+      const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+      });
+      console.log(product);
+      if (!product) {
+        return res.status(404).send("Product not found");
+      } else {
+        res.send(product);
+      }
+    } catch (error) {
+      next(error);
+    }
+  })
+
   .delete("/:id", async (req, res, next) => {
     try {
       const product = await Product.findByIdAndDelete(req.params.id);
